@@ -1,11 +1,11 @@
 #specfile originally created for Fedora, modified for Moblin Linux
 Summary:    A GNU tool for automatically configuring source code
 Name:       autoconf
-Version:    2.68
+Version:    2.69
 Release:    1
 License:    GPLv2+ and GFDL
 Group:      Development/Tools
-Source:     http://ftp.gnu.org/gnu/autoconf/autoconf-%{version}.tar.bz2
+Source:     http://ftp.gnu.org/gnu/autoconf/autoconf-%{version}.tar.xz
 Source1:    filter-provides-automake.sh
 Source2:    filter-requires-automake.sh
 URL:        http://www.gnu.org/software/autoconf/
@@ -14,7 +14,6 @@ Requires:           m4 >= 1.4.7, coreutils, grep
 Requires(post):     /sbin/install-info
 Requires(preun):    /sbin/install-info
 BuildArch: noarch
-BuildRoot:  %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
 # filter out bogus perl(Autom4te*) dependencies
 %define _use_internal_dependency_generator 0
@@ -45,8 +44,7 @@ chmod +x %{SOURCE2}
 %build
 # use ./configure here to avoid copying config.{sub,guess} with those from the
 # rpm package
-./configure --prefix=%{_prefix} --mandir=%{_mandir} --infodir=%{_infodir} \
-  --bindir=%{_bindir} --datadir=%{_datadir}
+./configure --prefix=%{_prefix} 
 make #  %{?_smp_mflags}  Makefile not smp save
 
 #check
@@ -58,9 +56,6 @@ make install DESTDIR=$RPM_BUILD_ROOT
 
 rm -f $RPM_BUILD_ROOT%{_infodir}/dir
 rm -rf $RPM_BUILD_ROOT%{_datadir}/emacs
-
-%clean
-rm -rf ${RPM_BUILD_ROOT}
 
 %post
 [ -e %{_infodir}/autoconf.info ] && /sbin/install-info %{_infodir}/autoconf.info %{_infodir}/dir || :
