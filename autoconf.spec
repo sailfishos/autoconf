@@ -1,13 +1,10 @@
 #specfile originally created for Fedora, modified for Moblin Linux
 Summary:    A GNU tool for automatically configuring source code
 Name:       autoconf
-Version:    2.69
+Version:    2.71
 Release:    1
 License:    GPLv2+ and GFDL
-Group:      Development/Tools
 Source:     http://ftp.gnu.org/gnu/autoconf/autoconf-%{version}.tar.xz
-Source1:    filter-provides-automake.sh
-Source2:    filter-requires-automake.sh
 URL:        http://www.gnu.org/software/autoconf/
 BuildRequires:      m4 >= 1.4.7
 Requires:           m4 >= 1.4.7, coreutils, grep
@@ -16,14 +13,13 @@ Requires(preun):    /sbin/install-info
 BuildArch: noarch
 
 # filter out bogus perl(Autom4te*) dependencies
-%define _use_internal_dependency_generator 0
-%define __find_provides %{SOURCE1}
-%define __find_requires %{SOURCE2}
+%global __requires_exclude %{?__requires_exclude:%__requires_exclude|}^perl\\(Autom4te::
+%global __provides_exclude %{?__provides_exclude:%__provides_exclude|}^perl\\(Autom4te::
 
 %description
 GNU's Autoconf is a tool for configuring source code and Makefiles.
 Using Autoconf, programmers can create portable and configurable
-packages, since the person building the package is allowed to 
+packages, since the person building the package is allowed to
 specify various configuration options.
 
 You should install Autoconf if you are developing software and
@@ -38,21 +34,19 @@ their use.
 
 %prep
 %setup -q
-chmod +x %{SOURCE1}
-chmod +x %{SOURCE2}
 
 %build
-# use ./configure here to avoid copying config.{sub,guess} with those from the
-# rpm package
-./configure --prefix=%{_prefix} 
-make #  %{?_smp_mflags}  Makefile not smp save
+%configure
+%make_build
 
 #check
 #make check VERBOSE=yes
 
 %install
-rm -rf ${RPM_BUILD_ROOT}
-make install DESTDIR=$RPM_BUILD_ROOT
+%make_install
+
+# Disable gtkdocize after installation to prevent dependency to help2man
+sed -i 's/uses_gtkdoc = 1/uses_gtkdoc = 0/g' $RPM_BUILD_ROOT%{_bindir}/autoreconf
 
 rm -f $RPM_BUILD_ROOT%{_infodir}/dir
 rm -rf $RPM_BUILD_ROOT%{_datadir}/emacs
@@ -67,11 +61,12 @@ fi
 
 %files
 %defattr(-,root,root,-)
+%license COPYING
 %{_bindir}/*
 %doc %{_infodir}/autoconf.info*
 # don't include standards.info, because it comes from binutils...
 %exclude %{_infodir}/standards*
 %{_datadir}/autoconf/
 %doc %{_mandir}/man1/*
-%doc AUTHORS COPYING ChangeLog NEWS README THANKS TODO
+%doc AUTHORS NEWS README THANKS TODO
 
