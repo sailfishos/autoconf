@@ -1,13 +1,13 @@
 #specfile originally created for Fedora, modified for Moblin Linux
 Summary:    A GNU tool for automatically configuring source code
 Name:       autoconf
-Version:    2.71
+Version:    2.72
 Release:    1
 License:    GPLv2+ and GFDL
 Source:     http://ftp.gnu.org/gnu/autoconf/autoconf-%{version}.tar.xz
 URL:        http://www.gnu.org/software/autoconf/
-BuildRequires:      m4 >= 1.4.7
-Requires:           m4 >= 1.4.7, coreutils, grep
+BuildRequires:      m4 >= 1.4.8
+Requires:           m4 >= 1.4.8, coreutils, grep
 Requires(post):     /sbin/install-info
 Requires(preun):    /sbin/install-info
 BuildArch: noarch
@@ -60,7 +60,6 @@ if [ "$1" = 0 ]; then
 fi
 
 %files
-%defattr(-,root,root,-)
 %license COPYING
 %{_bindir}/*
 %doc %{_infodir}/autoconf.info*
